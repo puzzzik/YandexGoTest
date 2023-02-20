@@ -10,86 +10,114 @@ import Combine
 
 // MARK: - ContentView
 
-@MainActor
 struct ContentView: View {
     @ObservedObject var viewModel: ViewModel
-    @State var progress = 0.0
-    @State var isCreating: Bool = false
 
     var body: some View {
         VStack {
-            switch viewModel.state {
-            case .creating:
-                ProgressView(value: viewModel.progress, total: 100) {
-                    Text("Создание файла - \(viewModel.progress.formatted()) %")
-                }.padding([.bottom], 100)
-            case .created:
-                Text("Файл создан!").padding([.bottom], 100)
-            case .sorting:
-                ProgressView(value: viewModel.progress, total: 100) {
-                    Text("Сортировка файла - \(viewModel.progress.formatted()) %")
-                }.padding([.bottom], 100)
-            case .sorted:
-                Text("Файл отсортирован!").padding([.bottom], 100)
-            case .none:
-                Text("").padding([.bottom], 100)
-            }
-
-            Text("Размер файла")
-            Slider(
-                value: $viewModel.fileWeight,
-                in: 0.1 ... 10
-            ) {
-            } minimumValueLabel: {
-                Text("1")
-            } maximumValueLabel: {
-                Text("10")
-            } onEditingChanged: { isEditing in
-                if !isEditing {
-                    viewModel.ramUsed = viewModel.fileWeight / 10
-                }
-            }
-            Text(String(format: "%.02f ", viewModel.fileWeight) + "ГБ")
-
-            Button {
-                Task.detached(priority: .high) {
-                    await viewModel.generateFile()
-                }
-            } label: {
-                Text("Сгенерировать файл")
-            }
-            .padding(.bottom, 60)
-            Text("Размер ОП")
-            Slider(
-                value: $viewModel.ramUsed,
-                in: 0.1 ... 1
-            ) {
-            } minimumValueLabel: {
-                Text("0.1")
-            } maximumValueLabel: {
-                Text("1")
-            }
-            Text(String(format: "%.03f ", viewModel.ramUsed) + "ГБ")
-
-            Button {
-                Task.detached(priority: .high) {
-                    await viewModel.sortFile()
-                }
-            } label: {
-                Text("Отсортировать файл")
-            }
+            weightView
+            Spacer()
+            progressView
+            fileView
         }
         .padding()
         .buttonStyle(.bordered)
     }
 
+    private var sliderRange: ClosedRange<Double> {
+        if viewModel.state == .none || viewModel.state == .sorted {
+            return 0.1 ... 10
+        } else if viewModel.state == .created {
+            return 0.1 ... 1
+        }
+        return 0 ... 0
+    }
 
-}
+    @ViewBuilder
+    private var progressView: some View {
+        switch viewModel.state {
+        case .creating, .sorting:
+            ProgressView(value: viewModel.progress, total: 100) {
+                if viewModel.state == .creating {
+                    Text("Создание файла - \(viewModel.progress.formatted()) %")
+                } else {
+                    Text("Сортировка файла - \(viewModel.progress.formatted()) %")
+                }
+            }
+            .padding([.bottom], 100)
+            .progressViewStyle(.circular)
+            .scaleEffect(1.2)
 
-// MARK: - ContentView_Previews
+        case .created:
+            Text("Файл создан!").padding([.bottom], 100)
+        case .sorted:
+            Text("Файл отсортирован!").padding([.bottom], 100)
+        case .none:
+            Text("").padding([.bottom], 100)
+        }
+    }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView(viewModel: ViewModel())
+    @ViewBuilder
+    private var fileView: some View {
+        if viewModel.state == .none || viewModel.state == .sorted {
+            Text("Размер файла")
+        } else if viewModel.state == .created {
+            Text("Размер ОП")
+        }
+
+        if viewModel.state != .creating, viewModel.state != .sorting {
+            Slider(
+                value: $viewModel.weight,
+                in: sliderRange
+            ) {
+            } minimumValueLabel: {
+                Text(String(format: "%.01f ", sliderRange.lowerBound))
+            } maximumValueLabel: {
+                Text(String(format: "%.01f ", sliderRange.upperBound))
+            }
+
+            Text(String(format: "%.02f ", viewModel.weight) + "ГБ")
+        }
+        button
+            .padding(.bottom, 60)
+    }
+
+    @ViewBuilder
+    private var button: some View {
+        Button {
+            switch viewModel.state {
+            case .creating, .sorting:
+                viewModel.cancelTasks()
+            case .none, .sorted:
+                Task.detached(priority: .high) {
+                    await viewModel.generateFile()
+                }
+            case .created:
+                Task.detached(priority: .high) {
+                    await viewModel.sortFile()
+                }
+            }
+        } label: {
+            switch viewModel.state {
+            case .creating, .sorting:
+                Text("Отменить")
+            case .none, .sorted:
+                Text("Сгенерировать файл")
+            case .created:
+                Text("Отсортировать файл")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var weightView: some View {
+        if viewModel.state == .creating {
+            Text("Размер файла")
+        } else if viewModel.state == .sorting {
+            Text("Размер ОП")
+        }
+        if viewModel.state != .sorted, viewModel.state != .created, viewModel.state != .none {
+            Text(String(format: "%.02f ", viewModel.weight) + "ГБ")
+        }
     }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6659CB102999082500AD4387 /* WriteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6659CB0F2999082500AD4387 /* WriteService.swift */; };
+		665FDAF429A25697005441C9 /* URLExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665FDAF329A25697005441C9 /* URLExtension.swift */; };
 		66AD1CDD2997AEE9003B124B /* YandexGoTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AD1CDC2997AEE9003B124B /* YandexGoTestApp.swift */; };
 		66AD1CDF2997AEE9003B124B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AD1CDE2997AEE9003B124B /* ContentView.swift */; };
 		66AD1CE12997AEEB003B124B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 66AD1CE02997AEEB003B124B /* Assets.xcassets */; };
@@ -18,6 +19,7 @@
 
 /* Begin PBXFileReference section */
 		6659CB0F2999082500AD4387 /* WriteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteService.swift; sourceTree = "<group>"; };
+		665FDAF329A25697005441C9 /* URLExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLExtension.swift; sourceTree = "<group>"; };
 		66AD1CD92997AEE9003B124B /* YandexGoTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YandexGoTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66AD1CDC2997AEE9003B124B /* YandexGoTestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGoTestApp.swift; sourceTree = "<group>"; };
 		66AD1CDE2997AEE9003B124B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				66AD1CE22997AEEB003B124B /* Preview Content */,
 				6659CB0F2999082500AD4387 /* WriteService.swift */,
 				66AF7B78299D28780041F16A /* FileSortService.swift */,
+				665FDAF329A25697005441C9 /* URLExtension.swift */,
 			);
 			path = YandexGoTest;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 				66AD1CEB2997B3E8003B124B /* ViewModel.swift in Sources */,
 				66AD1CDD2997AEE9003B124B /* YandexGoTestApp.swift in Sources */,
 				66AF7B79299D28780041F16A /* FileSortService.swift in Sources */,
+				665FDAF429A25697005441C9 /* URLExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
