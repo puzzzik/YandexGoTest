@@ -279,9 +279,8 @@ extension FileSortService {
                 try handle.write(contentsOf: buffer)
                 buffer.removeAll(keepingCapacity: true)
                 try Task.checkCancellation()
-                progress += (k * 100 / totalSteps)
+                progress = currentProgress + (k * 100 / totalSteps)
                 await completion(progress)
-                k = 0
             }
 
             minNumber = Int.max

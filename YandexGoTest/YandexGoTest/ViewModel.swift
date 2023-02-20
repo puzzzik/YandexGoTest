@@ -19,6 +19,7 @@ enum JobState {
 }
 
 // MARK: - ViewModel
+
 @MainActor
 final class ViewModel: ObservableObject {
     @Published var progress = 0.0
@@ -32,45 +33,39 @@ final class ViewModel: ObservableObject {
               in: .userDomainMask)[0].appending(path: "file.txt", directoryHint: .notDirectory)
 
     func generateFile() async {
-//        await MainActor.run {
-            self.state = .creating
-//        }
+        state = .creating
 
         let url = await fileWriteService.generateFile(size: weight) { progress in
-//            await MainActor.run {
-                self.state = .creating
-                self.progress = Double(progress)
-//            }
+
+            self.state = .creating
+            self.progress = Double(progress)
         }
-//        await MainActor.run {
-            if let url = url {
-                self.state = .created
-                self.url = url
-            } else {
-                self.state = .none
-                self.progress = 0
-            }
-//        }
+
+        if let url = url {
+            state = .created
+            self.url = url
+        } else {
+            state = .none
+            progress = 0
+        }
     }
 
     func sortFile() async {
         guard let url else { return }
-//        await MainActor.run {
-            self.state = .sorting
-//        }
+
+        state = .sorting
 
         let result = await fileSortService.sortFile(url: url,
                                                     size: Int(weight * pow(2, 30))) { progress in
             self.state = .sorting
             self.progress = Double(progress)
         }
-//        await MainActor.run {
-            if result != nil {
-                self.state = .sorted
-            } else {
-                self.state = .none
-            }
-//        }
+
+        if result != nil {
+            state = .sorted
+        } else {
+            state = .none
+        }
     }
 
     func cancelTasks() {

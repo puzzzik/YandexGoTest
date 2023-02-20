@@ -66,9 +66,6 @@ extension FileWriteService: FileWriteServiceProtocol {
                 if i % 500_000 == 0 {
                     try Task.checkCancellation()
                     await completion(i)
-//                    await MainActor.run { [i] in
-//                        completion(i)
-//                    }
                 }
             }
             try handle.write(contentsOf: buffer)
